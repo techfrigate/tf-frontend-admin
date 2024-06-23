@@ -1,0 +1,30 @@
+.customScrollbar {
+    overflow-y: auto;
+  }
+  
+  .customScrollbar::-webkit-scrollbar {
+    width: 10px;  
+  }
+  
+  .customScrollbar::-webkit-scrollbar-track {
+    background: #f5f3f3;  
+  }
+  
+  .customScrollbar::-webkit-scrollbar-thumb {
+    background-color: #bdbbbb;  
+    border-radius: 10px;  
+    border: 2px solid #f1f1f1;  
+  }
+  
+  .customScrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+   
+tbody:hover tr:not(:hover) {
+  filter: blur(1px);
+}
+
+tbody:hover tr:hover {
+  transform:  scale(1.01);
+}
+ 
