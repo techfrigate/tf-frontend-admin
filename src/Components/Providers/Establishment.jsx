@@ -11,7 +11,7 @@ const Establishment = ({
   const [formValues, setFormValues] = useState(EstablishmentFormValues);
 
   const [invalidFields, setInvalidFields] = useState({});
-  
+
   useEffect(() => {
     setFormValues(EstablishmentFormValues);
   }, [EstablishmentFormValues]);
@@ -48,7 +48,10 @@ const Establishment = ({
     <form className="pb-6 h-full px-3 customScrollbar" onSubmit={handleSubmit}>
       {EstablishmentData.length > 0 &&
         EstablishmentData?.map((elm, index) => (
-          <div key={index} className="pl-2 pb-4 border-b-2 border-slate-100 mt-4">
+          <div
+            key={index}
+            className=" pl-2 pb-4 border-b-2 border-slate-100 mt-4"
+          >
             <div className="py-1 ">
               <h1 className="text-lg font-semibold text-gray-800">
                 {elm.heading}
@@ -73,8 +76,8 @@ const Establishment = ({
             </div>
           </div>
         ))}
-      <div className="flex justify-end items-center mt-6 mr-7">
-      <CustomButton  type="submit" text="Next" />
+      <div className="flex  justify-end items-center mt-6 mr-7">
+        <CustomButton type="submit" text="Next" />
       </div>
     </form>
   );
