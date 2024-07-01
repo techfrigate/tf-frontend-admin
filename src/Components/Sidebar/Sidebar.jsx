@@ -1,16 +1,4 @@
 import React, { useState } from "react";
-// import {
-//   FaTachometerAlt,
-//   FaUserShield,
-//   FaUsers,
-//   FaUser,
-//   FaTh,
-//   FaCheckCircle,
-//   FaHeart,
-//   FaCogs,
-//   FaBell,
-// } from "react-icons/fa";
-
 import {
   FaUserFriends,
   FaUserShield,
@@ -27,9 +15,6 @@ import styles from "../../Css/Sidebar/Sidebar.module.css";
 import { FaRegHandshake } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { MdKeyboardArrowUp } from "react-icons/md";
-// import { FaPlus } from "react-icons/fa";
-// import { button } from "@material-tailwind/react";
-// import { Button, tooltip } from "@material-tailwind/react";
 
 const sidebarLinks = [
   {
@@ -51,24 +36,29 @@ const sidebarLinks = [
       { name: "Users", route: "/iam/users" },
     ],
   },
-
   {
-    name: "Patners",
+    name: "Partners",
     icon: <FaRegHandshake size={21} />,
-    subLink: [{ name: "Agreement", route: "/patners/agreement" }],
+    subLink: [{ name: "Agreement", route: "/partners/agreement" }],
   },
   {
     name: "Patients",
     icon: <FaUserMd size={21} />,
-    route: "/patients",
+    route: "/Patients",
   },
   {
     name: "Apps",
     icon: <IoAppsOutline size={21} />,
     subLink: [
-      { name: "Practitioner", route: "/apps/practitioner/roster" },
+      {
+        name: "Practitioner",
+        subLink: [{ name: "Roster", route: "/apps/practitioner/roster" }],
+      },
       { name: "Admin", route: "/apps/admin" },
-      { name: "Patient", route: "/apps/patient/circle" },
+      {
+        name: "Patient",
+        subLink: [{ name: "Circle", route: "/apps/patient/circle" }],
+      },
       { name: "Studio", route: "/apps/studio" },
     ],
   },
@@ -99,7 +89,16 @@ const sidebarLinks = [
   {
     name: "General",
     icon: <FaCogs size={21} />,
-    route: "/general",
+
+    subLink: [
+      { name: "Departments", route: "/general/departments" },
+      { name: "Services", route: "/general/services" },
+      { name: "Tariff", route: "/general/tariff" },
+      { name: "Appointments", route: "/general/appointments" },
+      { name: "Medicines", route: "/general/medicines" },
+      { name: "Diagnostic", route: "/general/diagnostic" },
+      { name: "Vitals", route: "/general/vitals" },
+    ],
   },
   {
     name: "Notification",
@@ -110,33 +109,48 @@ const sidebarLinks = [
 
 const Sidebar = ({ setShow, show }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [subLinkindex, setSubLinkindex] = useState(null);
-  const [openindex, setOpenIndex] = useState(null);
+  const [subLinkIndex, setSubLinkIndex] = useState(null);
+  const [openIndex, setOpenIndex] = useState(null);
+  const [subSubLinkIndex, setSubSubLinkIndex] = useState(null);
 
   const navigate = useNavigate();
+
   function handleSideClick(index, elm) {
     if (!elm.subLink) {
       setSelectedIndex(() => index);
       setOpenIndex(() => null);
       navigate(elm.route);
     } else {
-      if (index !== openindex) {
-        setSubLinkindex(null);
+      if (index !== openIndex) {
+        setSubLinkIndex(null);
+        setSubSubLinkIndex(null);
       }
-      setOpenIndex(() => (openindex === index ? null : index));
+      setOpenIndex(() => (openIndex === index ? null : index));
     }
   }
 
   function handleSubLinkClick(index, subelm, elm) {
-    setSubLinkindex(() => index);
-    setSelectedIndex(() => null);
-    navigate(subelm.route);
+    if (!subelm.subLink) {
+      setSubLinkIndex(() => index);
+      setSelectedIndex(() => null);
+      navigate(subelm.route);
+    } else {
+      if (index !== subLinkIndex) {
+        setSubSubLinkIndex(null);
+      }
+      setSubLinkIndex(() => (subLinkIndex === index ? null : index));
+    }
+  }
+
+  function handleSubSubLinkClick(index, subSubelm, subelm) {
+    setSubSubLinkIndex(() => index);
+    navigate(subSubelm.route);
   }
 
   return (
     <div className="bg-gray-50 pl-[8px] h-[100%]">
-      <div className="flex flex-col gap-5 ">
-        <div className="flex items-center justify-flex-start gap-2 pt-6 pb-[10px] px-[10px]  ml-4">
+      <div className="flex flex-col gap-5">
+        <div className="flex items-center justify-flex-start gap-2 pt-6 pb-[10px] px-[10px] ml-4">
           <img
             src="https://dev-central.unify.care/build/_assets/shortLogo-ZSVGBGEP.svg"
             className="w-11"
@@ -145,9 +159,7 @@ const Sidebar = ({ setShow, show }) => {
         </div>
       </div>
 
-      <div
-        className={` pr-[5px] mt-3 h-[83%]  w-max ${styles.customScrollbar}`}
-      >
+      <div className={`pr-[5px] mt-3 h-[83%] w-max ${styles.customScrollbar}`}>
         {sidebarLinks.map((elm, index) => (
           <div
             key={index}
@@ -160,7 +172,7 @@ const Sidebar = ({ setShow, show }) => {
             }`}
           >
             <div
-              className="flex justify-between w-full pl-6 py-[9px] hover:bg-gray-200 h-full rounded-md"
+              className="flex justify-between w-full pl-6 py-[9px] h-full rounded-md hover:bg-gray-200"
               onClick={() => handleSideClick(index, elm)}
             >
               <div className="flex gap-3 items-center ">
@@ -170,28 +182,66 @@ const Sidebar = ({ setShow, show }) => {
               {elm.subLink && (
                 <MdKeyboardArrowUp
                   className={`mr-4 mt-1 text-[1.15rem] transition-transform ${
-                    index === openindex ? "" : "rotate-180"
+                    index === openIndex ? "" : "rotate-180"
                   }`}
                 />
               )}
             </div>
-            {index === openindex && elm.subLink && (
-              <div className="flex flex-col gap-2 w-[75%] mt-2 box-border ml-auto ">
-                {elm.subLink.map((subelm, indexlink) => (
+            {index === openIndex && elm.subLink && (
+              <div className="flex flex-col gap-2 w-[80%] mt-2 box-border ml-auto">
+                {elm.subLink.map((subelm, subIndex) => (
                   <div
-                    className={`py-[8px]  ${
-                      indexlink === subLinkindex
+                    key={subIndex}
+                    className={`${
+                      subIndex === subLinkIndex && !subelm.subLink
                         ? "text-[#64C6B0] bg-[#FFFFFF]"
-                        : "text-black  font-thin"
-                    } hover:bg-gray-200 pl-4 rounded-md`}
+                        : "text-black font-thin "
+                    } pl-4 rounded-md ${
+                      subelm.subLink ? "" : "hover:bg-gray-200 "
+                    }`}
                   >
-                    <h2
-                      key={indexlink}
-                      onClick={() => handleSubLinkClick(indexlink, subelm, elm)}
-                      className="text-base font-semibold"
+                    <div
+                      className="flex justify-between w-full py-[10px] rounded-md px-1 hover:bg-gray-200"
+                      onClick={() => handleSubLinkClick(subIndex, subelm, elm)}
                     >
-                      {subelm.name}
-                    </h2>
+                      <h2 className="text-base font-semibold">{subelm.name}</h2>
+                      {subelm.subLink && (
+                        <MdKeyboardArrowUp
+                          className={`mr-4 mt-1 text-[1.15rem] transition-transform ${
+                            subIndex === subLinkIndex ? "" : "rotate-180"
+                          }`}
+                        />
+                      )}
+                    </div>
+                    {subIndex === subLinkIndex && subelm.subLink && (
+                      <div className="flex flex-col gap-2 w-[80%] mt-2 box-border ml-auto">
+                        {subelm.subLink.map((subSubelm, subSubIndex) => (
+                          <div
+                            key={subSubIndex}
+                            className={`${
+                              subSubIndex === subSubLinkIndex
+                                ? "text-[#64C6B0] bg-[#FFFFFF]"
+                                : "text-black font-thin"
+                            } pl-4 rounded-md ${
+                              subSubelm.subLink ? "" : "hover:bg-gray-200"
+                            }`}
+                          >
+                            <h2
+                              onClick={() =>
+                                handleSubSubLinkClick(
+                                  subSubIndex,
+                                  subSubelm,
+                                  subelm
+                                )
+                              }
+                              className="text-base font-semibold py-[8px]"
+                            >
+                              {subSubelm.name}
+                            </h2>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
