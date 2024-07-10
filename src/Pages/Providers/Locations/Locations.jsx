@@ -19,7 +19,7 @@ const Locations = ({ showForm, toggleCreateProviderForm }) => {
     setCurrentPage(selected);
   };
 
-  const [besicClientInfo, setBesicClientInfo] = useState({
+  const [locationFormData, setLocationFormData] = useState({
     organization: "",
     location: "",
     gender: "",
@@ -42,10 +42,9 @@ const Locations = ({ showForm, toggleCreateProviderForm }) => {
               Add Location
             </h1>
           </div>
-
           <LocationInfo
-            setBesicClientInfo={setBesicClientInfo}
-            besicClientInfo={besicClientInfo}
+            setBesicClientInfo={setLocationFormData}
+            besicClientInfo={locationFormData}
             setActiveTab={setActiveTab}
             UserBasicInfo={LocationFrom.UserBasicInfo}
           />

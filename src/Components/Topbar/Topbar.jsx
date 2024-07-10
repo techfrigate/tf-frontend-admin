@@ -94,6 +94,12 @@ const Topbar = ({ toggleCreateProviderForm, showForm }) => {
               onclick={toggleCreateProviderForm}
             ></CustomButton>
           )}
+          {window.location.href.includes("user") && (
+            <CustomButton
+              text={!showForm ? "User +" : "Back"}
+              onclick={toggleCreateProviderForm}
+            ></CustomButton>
+          )}
           <div className="relative cursor-pointer" ref={thanosRef}>
             <AiOutlineQuestionCircle size={25} onClick={handleHelpClick} />
             {isHelpModalOpen && <HelpModal />}

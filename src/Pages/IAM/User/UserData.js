@@ -40,3 +40,52 @@ export const data = [
     Updated: "Mar 14, 2024 12:34 PM",
   },
 ];
+
+export const UserFrom = {
+  UserBasicInfo: [
+    {
+      type: "text",
+      label: "Organization",
+      id: "organization",
+      placeholder: "Select Organization",
+    },
+    {
+      type: "text",
+      label: "Email",
+      id: "Email",
+      placeholder: "Email",
+    },
+    {
+      type: "dropdown",
+      label: "Phone Number",
+      id: "PNumber",
+      placeholder: "Enter your Number",
+    },
+    {
+      type: "text",
+      label: "First Name",
+      id: "FirstName",
+      placeholder: "First Name",
+    },
+    {
+      type: "text",
+      label: "Last Name",
+      id: "LastName",
+      placeholder: "Last Name",
+    },
+    {
+      type: "text",
+      label: "Gender",
+      id: "gender",
+      placeholder: "Gender",
+      options: ["Male", "Female"],
+    },
+    {
+      type: "dropdown",
+      label: "User Profile",
+      id: "Profile",
+      placeholder: "User Profile",
+      options: ["Admin", "Doctor", "Nurse", "Staff"],
+    },
+  ],
+};

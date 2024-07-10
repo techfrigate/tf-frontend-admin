@@ -65,7 +65,7 @@ const EditProfileModal = ({
           <div className="relative bg-white rounded-xl" ref={modalRef}>
             <button
               onClick={onClose}
-              className="absolute top-2 right-2 text-2xl text-[#64C6B0] rounded px-3 py-2"
+              className="absolute top-2 right-2 text-2xl text-gray-600 font-semibold rounded px-3 py-2"
             >
               <AiOutlineClose />
             </button>

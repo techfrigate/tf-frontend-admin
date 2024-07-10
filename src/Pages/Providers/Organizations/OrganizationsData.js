@@ -42,7 +42,7 @@ export const data = [
 ];
 
 export const OrganizationsForm = {
-  EstablishmentData: [
+  BusinessData: [
     {
       heading: "Organization Details",
       subHeading: "Information to be displayed on your provider's profile.",
@@ -171,7 +171,7 @@ export const OrganizationsForm = {
       ],
     },
   ],
-  AuthorizedData: [
+  RepresentativeData: [
     {
       heading: "Signatory Profile Configuration",
       subHeading: "Details of the provider's signatory profile.",
@@ -203,7 +203,7 @@ export const OrganizationsForm = {
       ],
     },
   ],
-  BankDetailData: [
+  FinancialData: [
     {
       heading: "Financial Information",
       subHeading: "Bank details of the provider's organization.",
