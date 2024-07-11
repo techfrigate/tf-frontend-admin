@@ -2,31 +2,82 @@ import React, { useState } from "react";
 import UserTd from "./UserTd";
 import UserteHeader from "./UserteHeader";
 import ReactPaginate from "react-paginate";
-import UserInfo from "../../../Components/Providers/LocationInfo";
+import PersonalFrom from "./PersonalFrom";
+import Contact from "./Contact";
+// import UserServices from "./UserServices";
+// import Roster from "./Roster";
+import UserWork from "./UserWork";
 import CustomTable from "../../../Components/Common/CustomTable";
 import { data, UserFrom } from "./UserData";
+// import ImageUploader from "./ImageUploader";
+// , "Services", "Roster"
+const tabHeaders = ["Personal", "Contact", "Work"];
 
-const User = ({ showForm, setShowForm }) => {
-  // eslint-disable-next-line
+const User = ({ showForm }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 5;
-
   const pageCount = Math.ceil(data.length / itemsPerPage);
   const offset = currentPage * itemsPerPage;
 
-  const [UserFormData, setUserFormData] = useState({
-    organization: "",
-    Email: "",
-    gender: "",
-    PNumber: "",
-    FirstName: "",
-    LastName: "",
-    Profile: "",
+  const [formData, setFormData] = useState({
+    PersonalData: {
+      organization: "",
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      gender: "",
+      phoneNumber: "",
+      email: "",
+      role: "",
+      isDoctor: false,
+    },
+    ContactData: {
+      Address1: "",
+      Address2: "",
+      Country: "",
+      State: "",
+      City: "",
+      PinCode: "",
+    },
+    WorkData: {
+      designation: "",
+      specialty: "",
+      superSpecialty: "",
+      parentTeam: "",
+      licenseNumber: "",
+      hprId: "",
+      reenterHprId: "",
+      aboutDoctor: "",
+    },
+    ServiceData: {
+      gracePeriod: "",
+      maxFreeAppointments: "",
+      teriffs: "",
+      assistance: "",
+    },
+    RosterData: {
+      Name: "",
+      Email: "",
+    },
   });
 
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected);
+  };
+
+  const handleTabClick = (index) => {
+    setActiveTab(index);
+  };
+
+  const setProviderData = (section, data) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [section]: {
+        ...prevState[section],
+        ...data,
+      },
+    }));
   };
 
   return (
@@ -34,16 +85,71 @@ const User = ({ showForm, setShowForm }) => {
       {showForm ? (
         <div className="h-[100%] pb-14 overflow-y-hidden">
           <div className="flex gap-4 border-b-2 border-gray-200 pb-2 sticky top-0 bg-white z-10 p-3 rounded-md">
-            <h1 className="text-2xl font-semibold text-[#64C6B0] ml-8">
-              Add User
-            </h1>
+            {tabHeaders.map((header, index) => (
+              <button
+                key={index}
+                className={` py-1 px-4 opacity-90 rounded-[4px] cursor-pointer transition duration-300 ease-in-out transform ${
+                  activeTab === index
+                    ? "bg-[#64C6B0] text-white"
+                    : "bg-gray-100 text-gray-700"
+                }`}
+                onClick={() => handleTabClick(index)}
+              >
+                {header}
+              </button>
+            ))}
           </div>
-          <UserInfo
-            setBesicClientInfo={setUserFormData}
-            besicClientInfo={UserFormData}
-            setActiveTab={setActiveTab}
-            UserBasicInfo={UserFrom.UserBasicInfo}
-          />
+          {/* <div className="flex items-center justify-start mt-2 gap-3">
+            <div className="relative w-max h-14 ml-2 cursor-pointer text-white">
+              <ImageUploader />
+            </div>
+            <div>
+              <h1 className="font-semibold">Add New User</h1>
+              <p className="font-thin">
+                Click on the pencil icon to upload the image
+              </p>
+            </div>
+          </div> */}
+          {activeTab === 0 && (
+            <PersonalFrom
+              setActiveTab={setActiveTab}
+              setProviderData={(data) => setProviderData("Personal", data)}
+              EstablishmentData={UserFrom.PersonalData}
+              EstablishmentFormValues={formData.PersonalData}
+            />
+          )}
+          {activeTab === 1 && (
+            <Contact
+              setActiveTab={setActiveTab}
+              setProviderData={(data) => setProviderData("Contact", data)}
+              AuthorizedData={UserFrom.ContactData}
+              AuthorizedFormValues={formData.ContactData}
+            />
+          )}
+          {activeTab === 2 && (
+            <UserWork
+              setActiveTab={setActiveTab}
+              setProviderData={(data) => setProviderData("WorkData", data)}
+              AuthorizedData={UserFrom.WorkData}
+              AuthorizedFormValues={formData.WorkData}
+            />
+          )}
+          {/* {activeTab === 3 && (
+            <UserServices
+              setActiveTab={setActiveTab}
+              setProviderData={(data) => setProviderData("ServiceData", data)}
+              AuthorizedData={UserFrom.ServiceData}
+              AuthorizedFormValues={formData.ServiceData}
+            />
+          )}
+          {activeTab === 4 && (
+            <Roster
+              setActiveTab={setActiveTab}
+              setProviderData={(data) => setProviderData("RosterData", data)}
+              BankDetailData={UserFrom.RosterData}
+              BankDetailFormValues={formData.RosterData}
+            />
+          )} */}
         </div>
       ) : (
         <div className="overflow-x-auto sm:rounded-lg ">

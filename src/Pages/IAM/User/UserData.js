@@ -41,51 +41,261 @@ export const data = [
   },
 ];
 
+// export const UserFrom = {
+//   UserBasicInfo: [
+//     {
+//       type: "text",
+//       label: "Organization",
+//       id: "organization",
+//       placeholder: "Select Organization",
+//     },
+//     {
+//       type: "text",
+//       label: "Email",
+//       id: "Email",
+//       placeholder: "Email",
+//     },
+//     {
+//       type: "dropdown",
+//       label: "Phone Number",
+//       id: "PNumber",
+//       placeholder: "Enter your Number",
+//     },
+//     {
+//       type: "text",
+//       label: "First Name",
+//       id: "FirstName",
+//       placeholder: "First Name",
+//     },
+//     {
+//       type: "text",
+//       label: "Last Name",
+//       id: "LastName",
+//       placeholder: "Last Name",
+//     },
+//     {
+//       type: "text",
+//       label: "Gender",
+//       id: "gender",
+//       placeholder: "Gender",
+//       options: ["Male", "Female"],
+//     },
+//     {
+//       type: "dropdown",
+//       label: "User Profile",
+//       id: "Profile",
+//       placeholder: "User Profile",
+//       options: ["Admin", "Doctor", "Nurse", "Staff"],
+//     },
+//   ],
+// };
+
 export const UserFrom = {
-  UserBasicInfo: [
+  PersonalData: [
     {
-      type: "text",
-      label: "Organization",
-      id: "organization",
-      placeholder: "Select Organization",
+      forminput: [
+        {
+          type: "text",
+          label: "First Name",
+          id: "firstName",
+          placeholder: "First Name",
+        },
+        {
+          type: "text",
+          label: "Last Name",
+          id: "lastName",
+          placeholder: "Last Name",
+        },
+        {
+          type: "date",
+          label: "Date of Birth",
+          id: "dateOfBirth",
+          placeholder: "DD-MM-YYYY",
+        },
+        {
+          type: "select",
+          label: "Gender",
+          id: "gender",
+          placeholder: "Select gender",
+          options: ["Male", "Female", "Other"],
+        },
+        {
+          type: "tel",
+          label: "Phone Number",
+          id: "phoneNumber",
+          placeholder: "Enter your phone number",
+        },
+        {
+          type: "email",
+          label: "Email",
+          id: "email",
+          placeholder: "Email",
+        },
+        {
+          type: "select",
+          label: "Organization",
+          id: "organization",
+          placeholder: "Select Organization",
+        },
+        {
+          type: "select",
+          label: "Role",
+          id: "role",
+          placeholder: "Select Roles",
+        },
+        // {
+        //   type: "checkbox",
+        //   label: "Is Doctor",
+        //   id: "isDoctor",
+        // },
+      ],
     },
+  ],
+  ContactData: [
     {
-      type: "text",
-      label: "Email",
-      id: "Email",
-      placeholder: "Email",
+      forminput: [
+        {
+          type: "text",
+          label: "Address 1*",
+          id: "Address1",
+          placeholder: "Address 1",
+        },
+        {
+          type: "text",
+          label: "Address 2",
+          id: "Address2",
+          placeholder: "Address 2",
+        },
+        {
+          type: "text",
+          label: "Country",
+          id: "Country",
+          placeholder: "Country",
+        },
+        {
+          type: "text",
+          label: "State",
+          id: "State",
+          placeholder: "State",
+        },
+        {
+          type: "text",
+          label: "City",
+          id: "City",
+          placeholder: "City",
+        },
+        {
+          type: "number",
+          label: "PinCode /Zip",
+          id: "PinCode",
+          placeholder: "PinCode",
+        },
+      ],
     },
+  ],
+  WorkData: [
     {
-      type: "dropdown",
-      label: "Phone Number",
-      id: "PNumber",
-      placeholder: "Enter your Number",
+      forminput: [
+        {
+          type: "text",
+          label: "Designation",
+          id: "designation",
+          placeholder: "Designation",
+        },
+        {
+          type: "text",
+          label: "Specialty",
+          id: "specialty",
+          placeholder: "Specialty",
+        },
+        {
+          type: "text",
+          label: "Super Specialty",
+          id: "superSpecialty",
+          placeholder: "Super Specialty",
+        },
+        {
+          type: "select",
+          label: "Parent Team",
+          id: "parentTeam",
+          placeholder: "Please select parent Team",
+          options: ["Team A", "Team B", "Team C"],
+        },
+        {
+          type: "text",
+          label: "License Number",
+          id: "licenseNumber",
+          placeholder: "License Number",
+        },
+        {
+          type: "text",
+          label: "HPR Id",
+          id: "hprId",
+          placeholder: "HPR Id",
+        },
+        {
+          type: "text",
+          label: "Re-enter HPR Id",
+          id: "reenterHprId",
+          placeholder: "Re-enter HPR Id",
+        },
+        {
+          type: "textarea",
+          label: "About Doctor",
+          id: "aboutDoctor",
+          placeholder: "About Doctor",
+        },
+      ],
     },
+  ],
+  ServiceData: [
     {
-      type: "text",
-      label: "First Name",
-      id: "FirstName",
-      placeholder: "First Name",
+      heading: "+ Services",
+      subHeading: "+ Add Services",
+      forminput: [
+        {
+          type: "textarea",
+          label: "Teriffs",
+          id: "teriffs",
+          placeholder: "Teriffs",
+        },
+        {
+          type: "text",
+          label: "Grace Period",
+          id: "gracePeriod",
+          placeholder: "Days",
+        },
+        {
+          type: "text",
+          label: "Max Free Appointments",
+          id: "maxFreeAppointments",
+          placeholder: "1",
+        },
+        {
+          type: "text",
+          label: "Assistance",
+          id: "assistance",
+          placeholder: "Search By Name",
+        },
+      ],
     },
+  ],
+  RosterData: [
     {
-      type: "text",
-      label: "Last Name",
-      id: "LastName",
-      placeholder: "Last Name",
-    },
-    {
-      type: "text",
-      label: "Gender",
-      id: "gender",
-      placeholder: "Gender",
-      options: ["Male", "Female"],
-    },
-    {
-      type: "dropdown",
-      label: "User Profile",
-      id: "Profile",
-      placeholder: "User Profile",
-      options: ["Admin", "Doctor", "Nurse", "Staff"],
+      forminput: [
+        {
+          type: "text",
+          label: "Name",
+          id: "Name",
+          placeholder: "Name",
+        },
+        {
+          type: "text",
+          label: "Email",
+          id: "Email",
+          placeholder: "Email",
+        },
+      ],
     },
   ],
 };

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import CustomInput from "../Common/CustomInput";
-import CustomButton from "../Common/CustomButton";
+import CustomInput from "../../../Components/Common/CustomInput";
+import CustomButton from "../../../Components/Common/CustomButton";
 
-const BankDetail = ({
+const Roster = ({
   setActiveTab,
   setProviderData,
   BankDetailData,
@@ -82,7 +82,7 @@ const BankDetail = ({
         <CustomButton
           type="button"
           text="Previous"
-          onclick={() => setActiveTab(1)}
+          onclick={() => setActiveTab(3)}
         />
         <CustomButton type="submit" text="Submit" />
       </div>
@@ -90,4 +90,4 @@ const BankDetail = ({
   );
 };
 
-export default BankDetail;
+export default Roster;
