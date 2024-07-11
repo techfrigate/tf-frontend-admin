@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import CustomInput from "../Common/CustomInput";
-import CustomButton from "../Common/CustomButton";
+import React, { useState, useEffect } from "react";
+import CustomInput from "../../../Components/Common/CustomInput";
+import CustomButton from "../../../Components/Common/CustomButton";
 
-const BankDetail = ({
+const Contact = ({
   setActiveTab,
   setProviderData,
-  BankDetailData,
-  BankDetailFormValues,
+  AuthorizedData,
+  AuthorizedFormValues,
 }) => {
-  const [formValues, setFormValues] = useState(BankDetailFormValues || {});
+  const [formValues, setFormValues] = useState(AuthorizedFormValues || {});
   const [invalidFields, setInvalidFields] = useState({});
 
   useEffect(() => {
-    setFormValues(BankDetailFormValues);
-  }, [BankDetailFormValues]);
+    setFormValues(AuthorizedFormValues || {});
+  }, [AuthorizedFormValues]);
 
   const handleChange = (name, value) => {
     setFormValues((prev) => ({
@@ -43,20 +43,20 @@ const BankDetail = ({
     if (isValid) {
       setProviderData((prev) => ({
         ...prev,
-        BankDetailFormValues: { ...formValues },
+        AuthorizedFormValues: { ...formValues },
       }));
-      alert("Form submitted successfully.");
+      setActiveTab(() => 2);
     }
   };
 
   return (
     <form
-      className={`pb-6 max-h-full px-3 customScrollbar`}
+      className="pb-6 max-h-full px-3 customScrollbar"
       onSubmit={handleSubmit}
     >
-      {BankDetailData?.map((elm, index) => (
+      {AuthorizedData?.map((elm, index) => (
         <div key={index} className="pl-2 pb-4 border-b-2 border-slate-100">
-          <div className="py-1">
+          <div className="py-1 ">
             <h1 className="text-lg font-semibold text-gray-800">
               {elm.heading}
             </h1>
@@ -82,12 +82,12 @@ const BankDetail = ({
         <CustomButton
           type="button"
           text="Previous"
-          onclick={() => setActiveTab(1)}
+          onclick={() => setActiveTab(0)}
         />
-        <CustomButton type="submit" text="Submit" />
+        <CustomButton type="submit" text="Next" />
       </div>
     </form>
   );
 };
 
-export default BankDetail;
+export default Contact;

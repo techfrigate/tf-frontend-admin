@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Establishment from "../../../Components/Providers/Establishment";
-import Authorized from "../../../Components/Providers/Authorized";
-import BankDetail from "../../../Components/Providers/BankDetail";
+import Business from "../../../Components/Providers/Establishment";
+import Representative from "../../../Components/Providers/Authorized";
+import Financial from "../../../Components/Providers/BankDetail";
 import OrganizationsTd from "./OrganizationsTd";
 import OrganizationstrHeader from "./OrganizationstrHeader";
 import ReactPaginate from "react-paginate";
@@ -27,8 +27,8 @@ const Organizations = ({ showForm }) => {
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected);
   };
-  const [providerData, setProviderData] = useState({
-    EstablishmentFormValues: {
+  const [OrganizationsData, setOrganizationsData] = useState({
+    BusinessFormValues: {
       legalName: "",
       displayName: "",
       displayImage: "",
@@ -47,13 +47,13 @@ const Organizations = ({ showForm }) => {
       country: "",
       zipcode: "",
     },
-    AuthorizedFormValues: {
+    RepresentativeValues: {
       FName: "",
       LName: "",
       NFLink: "",
       SATitle: "",
     },
-    BankDetailFormValues: {
+    FinancialFormValues: {
       AHName: "",
       ANumber: "",
       BName: "",
@@ -89,27 +89,27 @@ const Organizations = ({ showForm }) => {
           </div>
 
           {activeTab === 0 && (
-            <Establishment
+            <Business
               setActiveTab={setActiveTab}
-              setProviderData={setProviderData}
-              EstablishmentData={OrganizationsForm.EstablishmentData}
-              EstablishmentFormValues={providerData.EstablishmentFormValues}
+              setOrganizationsData={setOrganizationsData}
+              EstablishmentData={OrganizationsForm.BusinessData}
+              EstablishmentFormValues={OrganizationsData.BusinessFormValues}
             />
           )}
           {activeTab === 1 && (
-            <Authorized
+            <Representative
               setActiveTab={setActiveTab}
-              setProviderData={setProviderData}
-              AuthorizedData={OrganizationsForm.AuthorizedData}
-              AuthorizedFormValues={providerData.AuthorizedFormValues}
+              setOrganizationsData={setOrganizationsData}
+              AuthorizedData={OrganizationsForm.RepresentativeData}
+              AuthorizedFormValues={OrganizationsData.RepresentativeValues}
             />
           )}
           {activeTab === 2 && (
-            <BankDetail
+            <Financial
               setActiveTab={setActiveTab}
-              setProviderData={setProviderData}
-              BankDetailData={OrganizationsForm.BankDetailData}
-              BankDetailFormValues={providerData.BankDetailFormValues}
+              setOrganizationsData={setOrganizationsData}
+              BankDetailData={OrganizationsForm.FinancialData}
+              BankDetailFormValues={OrganizationsData.FinancialFormValues}
             />
           )}
         </div>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import CustomInput from "../Common/CustomInput";
 import CustomButton from "../Common/CustomButton";
 
-const BesicInfo = ({
+const LocationInfo = ({
   besicClientInfo,
   setActiveTab,
   UserBasicInfo,
@@ -76,4 +76,4 @@ const BesicInfo = ({
   );
 };
 
-export default BesicInfo;
+export default LocationInfo;

@@ -1,23 +1,36 @@
-import React from "react";
+import { useState } from "react";
 import { data } from "./UserData";
+import EditUser from "./EditUser";
 import { MdModeEdit } from "react-icons/md";
 import { FaUserLock } from "react-icons/fa6";
 
-const UserTd = ({ offset, itemsPerPage }) => {
+const UserTd = ({ offset, itemsPerPage, toggleCreateProviderForm }) => {
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  const handleEditClick = (user) => {
+    setSelectedRole(user);
+    setShowEditForm(true);
+  };
+
+  const handleSave = (updatedUser) => {
+    console.log("Updated User:", updatedUser);
+  };
   return (
     <>
+      <EditUser
+        show={showEditForm}
+        onClose={() => setShowEditForm(false)}
+        role={selectedRole}
+        onSave={handleSave}
+      />
       {data?.slice(offset, offset + itemsPerPage).map((item) => (
         <tr
           key={item.id}
           className="hover:bg-gray-100 bg-gray-50 border border-gray-300 hover:shadow-lg transition duration-300 ease-in-out cursor-pointer "
         >
-          <td className="py-4 px-6 font-medium">
-            {item.user}
-            {/* <div className="text-xs text-gray-600">{item.userDesc}</div>   */}
-          </td>
-
+          <td className="py-4 px-6 font-medium">{item.user}</td>
           <td className="py-4 px-6">{item.Organization}</td>
-
           <td className="py-4 px-6">
             <span
               className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold ${
@@ -49,7 +62,10 @@ const UserTd = ({ offset, itemsPerPage }) => {
             <div className="hover:bg-gray-300 rounded-full p-2">
               <FaUserLock />
             </div>
-            <div className="hover:bg-gray-300 rounded-full p-2">
+            <div
+              className="hover:bg-gray-300 rounded-full p-2"
+              onClick={() => handleEditClick(item)}
+            >
               <MdModeEdit />
             </div>
           </td>

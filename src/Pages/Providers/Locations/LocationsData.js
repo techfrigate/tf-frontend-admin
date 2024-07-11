@@ -42,8 +42,6 @@ export const data = [
 ];
 
 export const LocationFrom = {
-  // heading: "Organization Details",
-  // subHeading: "Information to be displayed on your provider's profile.",
   UserBasicInfo: [
     {
       type: "text",

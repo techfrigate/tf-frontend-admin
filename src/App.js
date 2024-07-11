@@ -51,7 +51,15 @@ function App() {
               <Route path="/workSpace/workflows" element={<Workflows />} />
               <Route path="/workSpace/workforms" element={<Workforms />} />
               <Route path="/workSpace/workstates" element={<Workstates />} />
-              <Route path="/iam/users" element={<User />} />
+              <Route
+                path="/iam/users"
+                element={
+                  <User
+                    showForm={showForm}
+                    toggleCreateProviderForm={toggleCreateProviderForm}
+                  />
+                }
+              />
               <Route path="/iam/roles" element={<Roles />} />
               <Route path="/iam/groups" element={<Groups />} />
               <Route path="/providers/agreements" element={<Agreements />} />
