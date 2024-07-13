@@ -29,6 +29,8 @@ import Tariff from "./Pages/General/Tariff/Tariff";
 import Diagnostic from "./Pages/General/Diagnostic/Diagnostic";
 import Medicines from "./Pages/General/Medicines/Medicines";
 import Vitals from "./Pages/General/Vitals/Vitals";
+import { Toaster } from "react-hot-toast";
+ 
 
 function App() {
   const [showForm, setShowForm] = useState(false);
@@ -39,6 +41,7 @@ function App() {
 
   return (
     <div className="flex bg-gray-200 h-[100vh]">
+     <Toaster position="top-center" reverseOrder={false} />
       <Sidebar />
       <div className="flex flex-col w-full h-[100vh] box-border overflow-hidden">
         <Topbar
@@ -79,6 +82,7 @@ function App() {
               <Route path="/providers/ward" element={<Ward />} />
               <Route path="/patners/agreement" element={<Patners />} />
               <Route path="/patients" element={<Patients />} />
+              
               <Route path="/apps/practitioner/roster" element={<Roster />} />
               <Route
                 path="/apps/patient/circle"
