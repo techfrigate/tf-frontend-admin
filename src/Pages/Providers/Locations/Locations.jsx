@@ -1,37 +1,80 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LocationInfo from "../../../Components/Providers/LocationInfo";
 import LocationsTd from "./LocationsTd";
 import LocationstrHeader from "./LocationstrHeader";
 import ReactPaginate from "react-paginate";
 import CustomTable from "../../../Components/Common/CustomTable";
 import { data, LocationFrom } from "./LocationsData";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchLocations, getLocation } from "../../../redux/locations/locationSlice";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 const Locations = ({ showForm, toggleCreateProviderForm }) => {
-  // eslint-disable-next-line
-  const [activeTab, setActiveTab] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
-  const pageCount = Math.ceil(data.length / itemsPerPage);
   const offset = currentPage * itemsPerPage;
+  const[sortBy,setSortBy] = useState("createdAt")
+  const[order,setOrder] =  useState('ASC')
+  const {location,locations,totalPages} = useSelector((state)=>state.locations)
 
+  const dispatch =  useDispatch();
   const handlePageClick = ({ selected }) => {
-    setCurrentPage(selected);
+    setCurrentPage(selected+1);
   };
 
   const [locationFormData, setLocationFormData] = useState({
-    organization: "",
-    location: "",
-    gender: "",
-    PNumber: "",
+    DisplayName: "",
+    name: "",
+    phoneNumber:"",
+    dialCode:"+91",
     address1: "",
     address2: "",
     country: "",
     zipcode: "",
     city: "",
     state: "",
-    NFLink: "",
+    HfrId1:"",
+    HfrId2:""
   });
+ 
+
+  useEffect(()=>{
+    dispatch(fetchLocations({currentPage,itemsPerPage,sortBy,order}));
+  },[currentPage,itemsPerPage,sortBy,order])
+
+
+ 
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
+
+  useEffect(()=>{
+    dispatch(getLocation(id))
+  },[id])
+
+
+  useEffect(()=>{
+    
+      const locationfind =  locations?.find((elm)=>elm._id===id)
+      if(locationfind){
+        console.log(locationfind,"location");
+        const{name,address:{addressLine1,addressLine2,country,city,zipCode,state},phoneNumber:{dialCode,value},tenantDisplayName,HfrId}  = locationfind
+        setLocationFormData({
+          name,
+          phoneNumber:value,
+          dialCode:dialCode,
+          DisplayName:tenantDisplayName,
+          address1:addressLine1,
+          address2:addressLine2,
+          country,
+          city,
+          zipcode:zipCode,
+          state,
+          HfrId1:HfrId,
+          HfrId2:HfrId,
+        })
+    }
+
+  },[location])
 
   return (
     <>
@@ -43,15 +86,16 @@ const Locations = ({ showForm, toggleCreateProviderForm }) => {
             </h1>
           </div>
           <LocationInfo
-            setBesicClientInfo={setLocationFormData}
-            besicClientInfo={locationFormData}
-            setActiveTab={setActiveTab}
+            setLocationFormData={setLocationFormData}
+            locationFormData={locationFormData}
             UserBasicInfo={LocationFrom.UserBasicInfo}
+            toggleCreateProviderForm={toggleCreateProviderForm}
+            id={id}
           />
         </div>
       ) : (
-        <div className="overflow-x-auto sm:rounded-lg ">
-          <CustomTable trHeader={LocationstrHeader}>
+        <div className="overflow-x-auto sm:rounded-lg">
+          <CustomTable trHeader={<LocationstrHeader setSortBy={setSortBy} setOrder={setOrder}/>}>
             <LocationsTd
               offset={offset}
               itemsPerPage={itemsPerPage}
@@ -62,9 +106,9 @@ const Locations = ({ showForm, toggleCreateProviderForm }) => {
             previousLabel={"«"}
             nextLabel={"»"}
             breakLabel={"..."}
-            pageCount={pageCount}
+            pageCount={totalPages}
             onPageChange={handlePageClick}
-            containerClassName={"flex justify-center mt-6 mb-0"}
+            containerClassName={"flex justify-end mt-6 pr-8 mb-0"}
             pageClassName={"mx-1"}
             pageLinkClassName={
               "block px-4 py-2 rounded hover:bg-[#4cb59c] hover:text-white"

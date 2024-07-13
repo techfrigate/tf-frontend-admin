@@ -4,14 +4,14 @@ import styles from "../../Css/Topbar/Topbar.module.css";
 import ProfileModal from "./ProfileModal";
 import HelpModal from "./HelpModal";
 import NotificationModal from "./NotificationModal";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CustomButton from "../Common/CustomButton";
 
 const Topbar = ({ toggleCreateProviderForm, showForm }) => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
-
+const navigate =  useNavigate();
   const { pathname } = useLocation();
 
   const thanosRef = useRef();
@@ -23,6 +23,13 @@ const Topbar = ({ toggleCreateProviderForm, showForm }) => {
       setIsProfileModalOpen(false);
     }
   };
+
+  const handleLocationclick = ()=>{
+    navigate("/providers/locations")
+    toggleCreateProviderForm();
+
+
+  }
 
   useEffect(() => {
     if (isNotificationModalOpen || isHelpModalOpen || isProfileModalOpen) {
@@ -79,7 +86,7 @@ const Topbar = ({ toggleCreateProviderForm, showForm }) => {
           {window.location.href.includes("locations") && (
             <CustomButton
               text={!showForm ? "Locations +" : "Back"}
-              onclick={toggleCreateProviderForm}
+              onclick={handleLocationclick}
             ></CustomButton>
           )}
           {window.location.href.includes("organizations") && (
