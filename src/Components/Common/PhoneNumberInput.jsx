@@ -23,8 +23,8 @@ const PhoneNumberInput = ({
 
      
         <select
-          className={`block w-1/5 px-3 py-1.5 border ${
-            isInvalid ? "border-red-500 shadow-md shadow-red-400/50" : "border-gray-300"
+          className={`block w-1/5 px-3 py-[7px] border ${
+            isInvalid ? "border-red-500 shadow-md shadow-red-400/30" : "border-gray-300"
           } rounded-l-lg focus:outline-none focus:shadow-md focus:border-[#64C6B0] focus:shadow-[#64C6B0]/30`}
           value={dialCode}
           onChange={(e) => onChangeDialCode(e.target.value)}
@@ -38,15 +38,15 @@ const PhoneNumberInput = ({
         <input
           type={type}
           id={id}
-          className={`block w-4/5 px-3 py-1.5 border-t border-b border-r ${
-            isInvalid ? "border-red-500 shadow-md shadow-red-400/20" : "border-gray-300"
+          className={`block w-4/5 px-3 py-[7px] border-t border-b border-r ${
+            isInvalid ? "border-red-500 shadow-md shadow-red-400/30" : "border-gray-300"
           } rounded-r-lg focus:outline-none focus:shadow-md focus:border-[#64C6B0] focus:shadow-[#64C6B0]/30`}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChangeNumber(e.target.value)}
         />
          </div>
-{isInvalid && <p className="mt-[2px] text-[12px] text-red-700">{isInvalid}</p>}
+       {isInvalid && <p className="mt-[2px] text-[12px] text-red-700">{isInvalid}</p>}
         
       </div>
     </div>

@@ -1,36 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import UserTd from "./UserTd";
 import UserteHeader from "./UserteHeader";
 import ReactPaginate from "react-paginate";
 import PersonalFrom from "./PersonalFrom";
 import Contact from "./Contact";
-// import UserServices from "./UserServices";
-// import Roster from "./Roster";
+import { format } from 'date-fns';
 import UserWork from "./UserWork";
 import CustomTable from "../../../Components/Common/CustomTable";
 import { data, UserFrom } from "./UserData";
+import { useDispatch, useSelector } from "react-redux";
+import { useDomEvent } from "framer-motion";
+import { getProfiles, getSingleProfile } from "../../../redux/users/userSlice";
+import { useNavigate, useSearchParams } from "react-router-dom";
 // import ImageUploader from "./ImageUploader";
 // , "Services", "Roster"
 const tabHeaders = ["Personal", "Contact", "Work"];
 
-const User = ({ showForm }) => {
+const User = ({ showForm,toggleCreateProviderForm }) => {
   const [activeTab, setActiveTab] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const[sortBy,setSortBy] =  useState("createdAt")
+  const[order,setOrder] =  useState("ASC")
   const itemsPerPage = 5;
-  const pageCount = Math.ceil(data.length / itemsPerPage);
-  const offset = currentPage * itemsPerPage;
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     PersonalData: {
-      organization: "",
       firstName: "",
       lastName: "",
       dateOfBirth: "",
       gender: "",
+      dialCode:"+91",
       phoneNumber: "",
       email: "",
-      role: "",
-      isDoctor: false,
+      userType: "",
     },
     ContactData: {
       Address1: "",
@@ -38,47 +41,175 @@ const User = ({ showForm }) => {
       Country: "",
       State: "",
       City: "",
-      PinCode: "",
+      zipCode: "",
     },
     WorkData: {
       designation: "",
-      specialty: "",
-      superSpecialty: "",
-      parentTeam: "",
+      speciality: "",
+      experience: "",
       licenseNumber: "",
       hprId: "",
       reenterHprId: "",
       aboutDoctor: "",
+      qualification:""
     },
-    ServiceData: {
-      gracePeriod: "",
-      maxFreeAppointments: "",
-      teriffs: "",
-      assistance: "",
-    },
-    RosterData: {
-      Name: "",
-      Email: "",
-    },
+    // ServiceData: {
+    //   gracePeriod: "",
+    //   maxFreeAppointments: "",
+    //   teriffs: "",
+    //   assistance: "",
+    // },
+    // RosterData: {
+    //   Name: "",
+    //   Email: "",
+    // },
   });
 
   const handlePageClick = ({ selected }) => {
-    setCurrentPage(selected);
+    setCurrentPage(selected+1);
   };
 
   const handleTabClick = (index) => {
     setActiveTab(index);
   };
 
-  const setProviderData = (section, data) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [section]: {
-        ...prevState[section],
-        ...data,
+  const dispatch= useDispatch()
+  useEffect(()=>{
+dispatch(getProfiles({currentPage,sortBy,order,itemsPerPage}))
+  },[sortBy,order,currentPage,itemsPerPage])
+   
+  const {editProfileStatus,totalPages,singleUser} = useSelector((state)=>state.users)
+ console.log(singleUser);
+
+
+  
+ const [searchParams] = useSearchParams();
+ const ProId = searchParams.get("ProId");
+
+ useEffect(()=>{
+  dispatch(getSingleProfile(ProId))
+ },[ProId])
+
+ useEffect(() => {
+  if (singleUser) {
+    const { address = {}, work = {},phoneNumber={} } = singleUser;
+    
+    let editFormData = {
+      PersonalData: {
+        firstName: singleUser.firstName || "",
+        lastName: singleUser.lastName || "",
+        dateOfBirth: singleUser.dob?format(new Date(singleUser.dob), 'yyyy-MM-dd'): "",
+        gender: singleUser.gender || "",
+        dialCode:phoneNumber?.dialCode || "+91",
+        phoneNumber: phoneNumber?.value || "",
+        email: singleUser.email || "",
+        userType: singleUser.userType || "",
       },
-    }));
-  };
+      ContactData: {
+        Address1: address.addressLine1 || "",
+        Address2: address.addressLine2 || "",
+        Country: address.country || "",
+        State: address.state || "",
+        City: address.city || "",
+        zipCode: address.zipCode || "",
+      },
+      WorkData: {
+        designation: work.designation || "",
+        speciality: work.speciality || "",
+        experience: work.experience || "",
+        licenseNumber: work.licenseNumber || "",
+        hprId: work.hprId || "",
+        reenterHprId: work.hprId || "",
+        aboutDoctor: work.about || "",
+        qualification: work.qualification || ""
+      },
+    };
+
+    setFormData(editFormData);
+  }
+}, [singleUser]);
+
+
+useEffect(()=>{
+  if(editProfileStatus==="succeeded"){
+    navigate("/iam/users")
+    toggleCreateProviderForm();
+    setFormData(()=>({
+      PersonalData: {
+        firstName: "",
+        lastName: "",
+        dateOfBirth: "",
+        gender: "",
+        dialCode:"+91",
+        phoneNumber: "",
+        email: "",
+        userType: "",
+      },
+      ContactData: {
+        Address1: "",
+        Address2: "",
+        Country: "",
+        State: "",
+        City: "",
+        zipCode: "",
+      },
+      WorkData: {
+        designation: "",
+        speciality: "",
+        experience: "",
+        licenseNumber: "",
+        hprId: "",
+        reenterHprId: "",
+        aboutDoctor: "",
+        qualification:""
+  }
+}
+)
+)
+  }
+
+},[editProfileStatus])
+
+useEffect(()=>{
+  if(!showForm){
+    setActiveTab(()=>0)
+    setFormData(()=>({
+      PersonalData: {
+        firstName: "",
+        lastName: "",
+        dateOfBirth: "",
+        gender: "",
+        dialCode:"+91",
+        phoneNumber: "",
+        email: "",
+        userType: "",
+      },
+      ContactData: {
+        Address1: "",
+        Address2: "",
+        Country: "",
+        State: "",
+        City: "",
+        zipCode: "",
+      },
+      WorkData: {
+        designation: "",
+        speciality: "",
+        experience: "",
+        licenseNumber: "",
+        hprId: "",
+        reenterHprId: "",
+        aboutDoctor: "",
+        qualification:""
+  }
+}
+)
+)
+
+  }
+
+},[showForm])
+
 
   return (
     <>
@@ -113,25 +244,30 @@ const User = ({ showForm }) => {
           {activeTab === 0 && (
             <PersonalFrom
               setActiveTab={setActiveTab}
-              setProviderData={(data) => setProviderData("Personal", data)}
-              EstablishmentData={UserFrom.PersonalData}
-              EstablishmentFormValues={formData.PersonalData}
+              setFormData={setFormData}
+              PersonalDataForm={UserFrom.PersonalData}
+              PersonalDataState={formData.PersonalData}
+             
             />
           )}
           {activeTab === 1 && (
             <Contact
               setActiveTab={setActiveTab}
-              setProviderData={(data) => setProviderData("Contact", data)}
-              AuthorizedData={UserFrom.ContactData}
-              AuthorizedFormValues={formData.ContactData}
+              setFormData={setFormData}
+              ContactDataForm={UserFrom.ContactData}
+              ContactDataState={formData.ContactData}
+             
             />
           )}
           {activeTab === 2 && (
             <UserWork
               setActiveTab={setActiveTab}
-              setProviderData={(data) => setProviderData("WorkData", data)}
-              AuthorizedData={UserFrom.WorkData}
-              AuthorizedFormValues={formData.WorkData}
+              setFormData={setFormData}
+              WorkDataStateForm={UserFrom.WorkData}
+              WorkDataState={formData.WorkData}
+              formData={formData}
+              ProId={ProId}
+
             />
           )}
           {/* {activeTab === 3 && (
@@ -153,14 +289,14 @@ const User = ({ showForm }) => {
         </div>
       ) : (
         <div className="overflow-x-auto sm:rounded-lg ">
-          <CustomTable trHeader={UserteHeader}>
-            <UserTd offset={offset} itemsPerPage={itemsPerPage} />
+          <CustomTable trHeader={<UserteHeader setSortBy={setSortBy} setOrder={setOrder}/>}>
+            <UserTd  toggleCreateProviderForm={toggleCreateProviderForm} />
           </CustomTable>
           <ReactPaginate
             previousLabel={"«"}
             nextLabel={"»"}
             breakLabel={"..."}
-            pageCount={pageCount}
+            pageCount={totalPages}
             onPageChange={handlePageClick}
             containerClassName={"flex justify-center mt-6 mb-0"}
             pageClassName={"mx-1"}

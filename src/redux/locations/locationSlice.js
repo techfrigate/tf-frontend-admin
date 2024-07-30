@@ -13,13 +13,12 @@ const initialState = {
 };
 
 const BASE_URL = 'http://localhost:3000/locations';
-const AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBTbWl0aCIsInN1YiI6IjY2N2Q1ZGFhMDM4MzAyMDYwZWU3MzcwZCIsInVzZXJUeXBlIjoicHJvdmlkZXIiLCJpYXQiOjE3MjA3ODg4MzQsImV4cCI6MTcyMDc5OTYzNH0.jD7zPG6YNAb3NQnXTqxLBMbdl93mB_eD66FnsExIb10';
-
+const AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjkzNGI3MWJjYWM4MjQzYjJhZGJiM2MiLCJ1c2VyVHlwZSI6InByb3ZpZGVyIiwiaWF0IjoxNzIyMzM4MzA4LCJleHAiOjE3MjIzNDkxMDh9.FUhlT01qKBE017S1n8ckk34gcUZbhXFzYnX8z9Ry_A8';
+const TENANT_ID = "667d5e70038302060ee7370f";
 // Create an async thunk to fetch locations
 export const fetchLocations = createAsyncThunk(
   'locations/fetchLocations',
   async ({currentPage,itemsPerPage,sortBy,order}, { rejectWithValue }) => {
-    console.log(currentPage,itemsPerPage,sortBy,order);
     try {
       const response = await axios.get(`${BASE_URL}`, {
         params: {
@@ -30,15 +29,19 @@ export const fetchLocations = createAsyncThunk(
       },
 
         headers: {
-          Authorization: `Bearer ${AUTH_TOKEN}`
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+          "tenantId":TENANT_ID
         }
       });
+console.log(response.data,"calling");
       return response.data;
     } catch (error) {
+      console.log(error,"caling");
       return rejectWithValue(error.response.data.message);
     }
   }
 );
+
 
 // Create location async thunk
 export const createLocation = createAsyncThunk(
