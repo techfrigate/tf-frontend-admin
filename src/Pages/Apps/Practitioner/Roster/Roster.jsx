@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ScheduleComponent,
   Day,
@@ -13,22 +13,32 @@ import {
 import styles from "../../../../Css/Roaster/Roster.module.css";
 import DoctorSelector from "../../../../Components/Roster/DoctorSelector";
 import RosterModel from "../../../../Components/Roster/RosterModel.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchLocationsForRosters, getRosters, profilesOfLocation, saveRoster } from "../../../../redux/rosters/rosterSlice.js";
 
 export const scheduleData = []
 
 const Roster = () => {
   const [selectedDoctors, setSelectedDoctors] = useState([]);
   const [showDoctors, setShowDoctors] = useState(false);
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState();
   const [slotsDuration, setSlotsDuration] = useState("");
-  const [allowedBooking, setAllowedBooking] = useState("");
   const [invalidFields, setInvalidFields] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({});
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [endTime, setEndTime] = useState(""); 
   const [rosterData, setRosterData] = useState(scheduleData);
+  const [doctors, setDoctors] = useState([]);
+
+  useEffect(() => {
+    setFormData((pre) => ({ ...pre, startTime }));
+  }, [startTime]);
+
+  useEffect(() => {
+    setFormData((pre) => ({ ...pre, endTime }));
+  }, [endTime]);
 
   const onPopupOpen = (args) => {
     const newDate = args.data.StartTime;
@@ -40,14 +50,19 @@ const Roster = () => {
         args.cancel = true;
         return;
       }
+      if (newDate.getDay() === 0) {
+        alert("We do not allow selecting Sundays.");
+        args.cancel = true;
+        return;
+      }
       setSelectedDate(() => newDate);
     }
+
     args.cancel = true;
     const invalid = {};
     if (selectedDoctors.length === 0) invalid.selectedDoctors = true;
     if (!location) invalid.location = true;
     if (!slotsDuration) invalid.slotsDuration = true;
-    if (!allowedBooking) invalid.allowedBooking = true;
     if (Object.keys(invalid).length) {
       setInvalidFields(invalid);
     } else {
@@ -55,7 +70,6 @@ const Roster = () => {
         location,
         selectedDoctors,
         slotsDuration,
-        allowedBooking,
         date: selectedDate,
         startTime,
         endTime,
@@ -64,44 +78,37 @@ const Roster = () => {
     }
   };
 
-  const [doctors, setDoctors] = useState([
-    { id: 1, name: "Dr. Dipanshu Verma", role: "Doctor", isSelected: false },
-    { id: 2, name: "Dr. Shivam Swami", role: "Doctor", isSelected: false },
-    { id: 3, name: "Dr. Dhruv Swami", role: "Doctor", isSelected: false },
-    { id: 4, name: "Dr. Rahul Kumar", role: "Doctor", isSelected: false },
-    { id: 5, name: "Dr. Suresh Raina", role: "Doctor", isSelected: false },
-    { id: 6, name: "Dr. Amit Kumar", role: "Doctor", isSelected: false },
-  ]);
-
   const handleFocus = () => setShowDoctors(true);
 
   const handleSelectDoctor = (index, id) => {
     const updatedDoctors = [...doctors];
     const doctor = updatedDoctors[index];
     doctor.isSelected = !doctor.isSelected;
-    setDoctors(updatedDoctors);
+    setDoctors((pre)=>   pre.map((elm)=> elm._id===doctor._id?doctor:{...elm,isSelected:false}));
 
     if (doctor.isSelected) {
-      setSelectedDoctors((prev) => [...prev, doctor]);
+      setSelectedDoctors((prev) => [doctor]);
+      setInvalidFields((prev) => ({ ...prev, selectedDoctors: false }));
     } else {
-      setSelectedDoctors((prev) => prev.filter((doc) => doc.id !== id));
+      setSelectedDoctors([]);
+      setInvalidFields((prev) => ({ ...prev, selectedDoctors: true }));
     }
 
-    setInvalidFields((prev) => ({ ...prev, selectedDoctors: false }));
+  
   };
 
   const handleRemoveEvent = (doctorId) => {
     setRosterData((prevData) =>
-      prevData.filter((event) => event.doctorId !== doctorId)
+      prevData.filter((event) => event._doctorId !== doctorId)
     );
   };
 
   const handleRemoveDoctor = (id) => {
-    setSelectedDoctors((prev) => prev.filter((doc) => doc.id !== id));
+    setSelectedDoctors([]);
     setDoctors((prev) =>
-      prev.map((doc) => (doc.id === id ? { ...doc, isSelected: false } : doc))
+      prev.map((doc) => (doc._id === id ? { ...doc, isSelected: false } : doc))
     );
-    handleRemoveEvent(id); // Remove the event when doctor is removed
+    handleRemoveEvent(id);
   };
 
   const convertToISOString = (date, time) => {
@@ -119,31 +126,116 @@ const Roster = () => {
 
     const dateTime = new Date(date);
     dateTime.setHours(hours, minutes, 0, 0);
-
+    const offsetMinutes = dateTime.getTimezoneOffset();
+    dateTime.setMinutes(dateTime.getMinutes() - offsetMinutes);
     if (isNaN(dateTime.getTime())) {
       throw new Error("Invalid date");
     }
 
-    return dateTime.toISOString();
+    const isoString = dateTime.toISOString();
+    return isoString;
   };
 
-  const handleSaveRoster = (newRosters) => {
-    const newEvents = newRosters.flatMap((newRoster, rosterIndex) =>
-      newRoster.selectedDoctors.map((doctor, index) => ({
-        Id: rosterData.length + 1 + rosterIndex * newRoster.selectedDoctors.length + index,
-        doctorId: doctor.id, // Store doctorId to identify the event
-        Subject: `Appointment with ${doctor.name}`,
-        StartTime: new Date(convertToISOString(newRoster.date, newRoster.startTime)),
-        EndTime: new Date(convertToISOString(newRoster.date, newRoster.endTime)),
+  const handleSaveRoster = () => {
+    const { visitType, repeat } = formData;
+    const selectedLocation = rosterLocations.find((elm) => elm.name === location);
+    const { _id, name, address: { addressLine1, addressLine2, city, country, state, zipCode } } = selectedLocation;
+
+    const createRoster = (date) => {
+      selectedDoctors.forEach((elm) => {
+        const { firstName, lastName, userType, tenantId, userId, work: { designation, speciality, licenseNumber, hprId, about, qualification } } = elm;
+        const rosterData = {
+          userId, tenantId, locationId: _id, startDate: convertToISOString(date, startTime), endDate: convertToISOString(date, endTime), visitType, duration: slotsDuration,
+          repeat,
+          practitionerData: { firstName, lastName, designation, speciality, licenseNumber, hprId, about, qualification, userType },
+          locationData: { locationId: _id, name, address: { addressLine1, addressLine2, city, country, state, zipCode } }
+        };
+        console.log(rosterData, "roster data");
+        dispatch(saveRoster(rosterData));
+      });
+    };
+
+    const currentDate = new Date(selectedDate);
+    const dayOfWeek = currentDate.getDay();
+    if (repeat == 0) {
+      createRoster(selectedDate);
+    } else if (repeat == 1) {
+      createRoster(selectedDate);
+      if (dayOfWeek !== 6) {
+        const tomorrow = new Date(selectedDate);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        createRoster(tomorrow);
+      }
+    } else if (repeat == 2) {
+      for (let i = dayOfWeek; i <= 6; i++) {
+        if (i === 0) continue; // Skip Sunday
+        const date = new Date(selectedDate);
+        date.setDate(currentDate.getDate() + (i - dayOfWeek));
+        createRoster(date);
+      }
+    }
+  };
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchLocationsForRosters());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if(selectedDoctors.length>0){
+      dispatch(getRosters(selectedDoctors[0].userId));
+    }else{
+      setRosterData([])
+    }
+ 
+  }, [dispatch,selectedDoctors]);
+
+
+  const { rosterLocations, locationDoctors, rostersData } = useSelector((state) => state.rosters);
+
+  useEffect(() => {
+    const updatedDoctors = locationDoctors?.map((elm) => ({ ...elm, isSelected: false }));
+    setDoctors(() => updatedDoctors);
+  }, [locationDoctors]);
+
+  useEffect(() => {
+    if (location) {
+      setSelectedDoctors([]);
+      const selectedLocation = rosterLocations.find((elem) => elem.name === location);
+      dispatch(profilesOfLocation(selectedLocation._id));
+    }
+  }, [location, dispatch, rosterLocations]);
+
+  useEffect(() => {
+    const newEvents = rostersData?.map((roster, rosterIndex) => {
+      const startTime = new Date(roster.startDate);
+      const endTime = new Date(roster.endDate);
+      return {
+        Id: rostersData.length + 1 + rosterIndex,
+        rosterId: roster._id,
+        Subject: `Appointment with ${roster.practitionerData.firstName} ${roster.practitionerData.lastName}`,
+        StartTime: startTime,
+        EndTime: endTime,
         CategoryColor: "#64C6B0",
-        Description: `Visit Type: ${newRoster.visitType}`,
-      }))
-    );
-    setRosterData((prevData) => [...prevData, ...newEvents]);
-  };
-  
+        Description: `Visit Type: ${roster.visitType}`,
+      };
+    });
 
-  console.log(rosterData);
+    setRosterData(() => newEvents);
+  }, [rostersData]);
+
+  const onDragStop = (args) => {
+    const newDate = args.data.StartTime;
+    if (newDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (newDate < today) {
+        alert("You cannot drop an event on a past date.");
+        args.cancel = true;
+      }
+    }
+  };
+
   return (
     <div className="flex gap-0 h-full px-2 py-2">
       <div className="bg-white rounded-xl border border-gray-300 shadow-md p-3 w-[26%]">
@@ -175,12 +267,14 @@ const Roster = () => {
             <option value="" disabled>
               Select Location
             </option>
-            <option
-              value="mohta hospital"
-              className="text-gray-700 bg-gray-100 hover:bg-gray-200"
-            >
-              Mohta Hospital
-            </option>
+            {rosterLocations.length > 0 && rosterLocations.map((elm) =>
+              <option
+                value={elm.name}
+                className="text-gray-700 bg-gray-100 hover:bg-gray-200"
+              >
+                {elm.name}
+              </option>
+            )}
           </select>
         </div>
         <DoctorSelector
@@ -216,38 +310,17 @@ const Roster = () => {
             />
           </div>
         </div>
-        <div className="mb-4">
-          <label className="block mb-1 font-semibold text-gray-600">
-            Allowed Booking
-          </label>
-          <div
-            className={`rounded-md w-full py-2 px-3 flex justify-between items-center text-gray-500 shadow-inner border ${
-              invalidFields.allowedBooking
-                ? "shadow-md border-red-700 shadow-red-700/30"
-                : "focus-within:shadow-md focus-within:border-[#64C6B0] focus-within:shadow-[#64C6B0]/30"
-            }`}
-          >
-            <input
-              type="number"
-              placeholder="Allowed Booking"
-              value={allowedBooking}
-              onChange={(e) => {
-                setInvalidFields((prev) => ({ ...prev, allowedBooking: false }));
-                setAllowedBooking(e.target.value);
-              }}
-              className={`border-none w-[86%] outline-none bg-transparent ${styles.roster_placeholder}`}
-            />
-          </div>
-        </div>
       </div>
-      {/* Calendar */}
+       
       <div className="flex-1 ml-2 rounded-xl overflow-hidden border border-gray-300 shadow-md">
-      <ScheduleComponent
+        <ScheduleComponent
           height="100%"
           selectedDate={selectedDate}
           eventSettings={{ dataSource: rosterData }}
           currentView="Month"
+          timezone="UTC"  
           popupOpen={onPopupOpen}
+          dragStop={onDragStop} 
           cssClass={styles.custom_schedule}
         >
           <Inject
@@ -255,9 +328,10 @@ const Roster = () => {
           />
         </ScheduleComponent>
       </div>
-      {/* Modal */}
       {showModal && (
         <RosterModel
+          setFormData={setFormData}
+          slotsDuration={slotsDuration}
           formData={formData}
           onClose={() => setShowModal(false)}
           setStartTime={setStartTime}
@@ -269,4 +343,4 @@ const Roster = () => {
   );
 };
 
-export default Roster
+export default Roster;

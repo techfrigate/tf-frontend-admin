@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { RxCross1 } from "react-icons/rx";
 import { IoMdCheckmark } from "react-icons/io";
 import styles from "../../Css/Roaster/Roster.module.css";
+import { useSelector } from "react-redux";
 
 const lightColors = [
   "bg-blue-100",
@@ -41,6 +42,9 @@ const DoctorSelector = ({
     };
   }, [doctorsRef]);
 
+ 
+   
+
   return (
     <div className="mb-4" ref={doctorsRef}>
       <label className="block mb-1 font-semibold text-sm text-gray-600">
@@ -58,10 +62,10 @@ const DoctorSelector = ({
         }`}
       >
         {selectedDoctors.length > 0 ? (
-          <div className="h-full grid grid-cols-2 gap-1 gap-y-2 justify-between mb-2">
+          <div className="h-full grid grid-cols-1 gap-1 gap-y-2 justify-between mb-2">
             {selectedDoctors.map((elm, index) => (
               <motion.div
-                className={`flex justify-between shadow-inner items-center pr-1 py-1 text-gray-900 rounded-lg ${
+                className={`flex justify-between shadow-inner items-center w-[60%] pr-1 py-1.5 text-gray-900 rounded-lg ${
                   lightColors[index % lightColors.length]
                 }`}
                 initial="hidden"
@@ -71,15 +75,15 @@ const DoctorSelector = ({
                   visible: { opacity: 1 },
                 }}
                 transition={{ delay: index * 0.1 }}
-                key={elm.id}
+                key={elm._id}
               >
-                <div className="flex items-center gap-1 w-max px-1">
-                  <p className="w-[18px] h-[18px] text-[8px] rounded-full bg-[#64C6B0] text-white flex items-center justify-center">
-                    {`${elm.name.split(" ")[1][0]}${elm.name.split(" ")[2][0]}`}
+                <div className="flex items-center gap-1.5 w-max px-2">
+                  <p className="w-[20px] h-[20px] text-[10px] rounded-full bg-[#64C6B0] text-white flex items-center justify-center">
+                    {`${elm.firstName[0]} ${elm.lastName[0]}`}
                   </p>
-                  <p className="text-[12px] ">{elm.name.slice(0, 12) + "..."}</p>
+                  <p className="text-[15px] ">{`${elm.firstName} ${elm.lastName}`}</p>
                 </div>
-                <RxCross1 size={10} className="cursor-pointer" onClick={() => handleRemoveDoctor(elm.id)} />
+                <RxCross1 size={12} className="cursor-pointer" onClick={() => handleRemoveDoctor(elm._id)} />
               </motion.div>
             ))}
           </div>
@@ -94,11 +98,11 @@ const DoctorSelector = ({
         />
       </div>
       {showDoctors && (
-        <div className="h-[150px] mt-1 rounded-xl shadow-xl relative z-10 overflow-hidden">
-          <div className="customScrollbar h-full">
-            {doctors.map((elm, index) => (
+        <div className=" customScrollbar h-[100%] max-h-[150px] rounded-md rounded-tl-none rounded-tr-none shadow-xl relative z-10 overflow-hidden bg-white">
+         
+            {doctors.length>0&& doctors.map((elm, index) => (
               <motion.div
-                className="flex justify-between items-center pr-1 bg-white cursor-pointer"
+                className="flex justify-between items-center pr-1 cursor-pointer m-1"
                 initial="hidden"
                 animate="visible"
                 variants={{
@@ -107,21 +111,21 @@ const DoctorSelector = ({
                 }}
                 transition={{ delay: index * 0.3 }}
                 key={elm.id}
-                onClick={() => handleSelectDoctor(index, elm.id)}
+                onClick={() => handleSelectDoctor(index, elm._id)}
               >
                 <div className="flex items-center gap-1.5 w-max px-2">
                   <p className="w-[28px] h-[28px] text-[12px] rounded-full bg-[#64C6B0] text-white flex items-center justify-center">
-                    {`${elm.name.split(" ")[1][0]}${elm.name.split(" ")[2][0]}`}
+                    {`${elm.firstName[0]} ${elm.lastName[0]}`}
                   </p>
                   <div className="flex flex-col justify-between">
-                    <p className="font-semibold text-[13px] opacity-80">{elm.name}</p>
-                    <p className="text-[11px] text-gray-600">{elm.role}</p>
+                    <p className="font-semibold text-[13px] opacity-80">{`${elm.firstName} ${elm.lastName}`}</p>
+                    <p className="text-[12px] text-gray-600">{elm.userType}</p>
                   </div>
                 </div>
                 {elm.isSelected && <IoMdCheckmark size={21} className="text-[#64C6B0]" />}
               </motion.div>
             ))}
-          </div>
+        
         </div>
       )}
     </div>

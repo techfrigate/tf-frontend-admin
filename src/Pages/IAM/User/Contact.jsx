@@ -4,16 +4,17 @@ import CustomButton from "../../../Components/Common/CustomButton";
 
 const Contact = ({
   setActiveTab,
-  setProviderData,
-  AuthorizedData,
-  AuthorizedFormValues,
+  setFormData,
+  ContactDataForm,
+  ContactDataState,
+ 
 }) => {
-  const [formValues, setFormValues] = useState(AuthorizedFormValues || {});
+  const [formValues, setFormValues] = useState(ContactDataState || {});
   const [invalidFields, setInvalidFields] = useState({});
 
   useEffect(() => {
-    setFormValues(AuthorizedFormValues || {});
-  }, [AuthorizedFormValues]);
+    setFormValues(ContactDataState || {});
+  }, [ContactDataState]);
 
   const handleChange = (name, value) => {
     setFormValues((prev) => ({
@@ -22,7 +23,7 @@ const Contact = ({
     }));
     setInvalidFields((prev) => ({
       ...prev,
-      [name]: false,
+      [name]: "",
     }));
   };
 
@@ -32,8 +33,8 @@ const Contact = ({
     let isValid = true;
 
     Object.keys(formValues).forEach((key) => {
-      if (formValues[key] === "") {
-        newInvalidFields[key] = true;
+      if (formValues[key] === ""  &&   key !== "Address2") {
+        newInvalidFields[key] = `Please Enter ${key}`;
         isValid = false;
       }
     });
@@ -41,9 +42,9 @@ const Contact = ({
     setInvalidFields(newInvalidFields);
 
     if (isValid) {
-      setProviderData((prev) => ({
+      setFormData((prev) => ({
         ...prev,
-        AuthorizedFormValues: { ...formValues },
+        ContactData: { ...formValues },
       }));
       setActiveTab(() => 2);
     }
@@ -54,7 +55,7 @@ const Contact = ({
       className="pb-6 max-h-full px-3 customScrollbar"
       onSubmit={handleSubmit}
     >
-      {AuthorizedData?.map((elm, index) => (
+      {ContactDataForm?.map((elm, index) => (
         <div key={index} className="pl-2 pb-4 border-b-2 border-slate-100">
           <div className="py-1 ">
             <h1 className="text-lg font-semibold text-gray-800">
@@ -64,6 +65,7 @@ const Contact = ({
           </div>
           <div className="px-4 mt-4 grid grid-cols-3 gap-x-7 gap-y-4">
             {elm.forminput.map((elem) => (
+              <div key={elem.id} className="w-full mb-2">
               <CustomInput
                 key={elem.id}
                 type={elem.type}
@@ -74,6 +76,7 @@ const Contact = ({
                 isInvalid={invalidFields[elem.id]}
                 onchange={(e) => handleChange(elem.id, e.target.value)}
               />
+              </div>
             ))}
           </div>
         </div>

@@ -27,10 +27,13 @@ const navigate =  useNavigate();
   const handleLocationclick = ()=>{
     navigate("/providers/locations")
     toggleCreateProviderForm();
-
-
   }
 
+  const handleUsersBackClick = ()=>{
+    navigate("/iam/users")
+    toggleCreateProviderForm();
+  }  
+  
   useEffect(() => {
     if (isNotificationModalOpen || isHelpModalOpen || isProfileModalOpen) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -104,7 +107,7 @@ const navigate =  useNavigate();
           {window.location.href.includes("user") && (
             <CustomButton
               text={!showForm ? "User +" : "Back"}
-              onclick={toggleCreateProviderForm}
+              onclick={handleUsersBackClick}
             ></CustomButton>
           )}
           <div className="relative cursor-pointer" ref={thanosRef}>

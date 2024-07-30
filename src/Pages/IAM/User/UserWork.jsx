@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
 import CustomInput from "../../../Components/Common/CustomInput";
 import CustomButton from "../../../Components/Common/CustomButton";
+import { useDispatch, useSelector } from "react-redux";
+import { createProfile, editProfile } from "../../../redux/users/userSlice";
 
 const UserWork = ({
   setActiveTab,
-  setProviderData,
-  AuthorizedData,
-  AuthorizedFormValues,
+  setFormData,
+  WorkDataStateForm,
+  WorkDataState,
+  formData,
+  ProId
 }) => {
-  const [formValues, setFormValues] = useState(AuthorizedFormValues || {});
+  const [formValues, setFormValues] = useState(WorkDataState || {});
   const [invalidFields, setInvalidFields] = useState({});
-
+const dispatch=  useDispatch()
+const {singleUser}  = useSelector(state=>state.users)
   useEffect(() => {
-    setFormValues(AuthorizedFormValues || {});
-  }, [AuthorizedFormValues]);
+    setFormValues(WorkDataState || {});
+  }, [WorkDataState]);
 
   const handleChange = (name, value) => {
     setFormValues((prev) => ({
@@ -22,7 +27,7 @@ const UserWork = ({
     }));
     setInvalidFields((prev) => ({
       ...prev,
-      [name]: false,
+      [name]: "",
     }));
   };
 
@@ -33,7 +38,7 @@ const UserWork = ({
 
     Object.keys(formValues).forEach((key) => {
       if (formValues[key] === "") {
-        newInvalidFields[key] = true;
+        newInvalidFields[key] = `Please Enter ${key}`;
         isValid = false;
       }
     });
@@ -41,12 +46,21 @@ const UserWork = ({
     setInvalidFields(newInvalidFields);
 
     if (isValid) {
-      setProviderData((prev) => ({
+      setFormData((prev) => ({
         ...prev,
-        AuthorizedFormValues: { ...formValues },
+        WorkData: { ...formValues },
       }));
-      setActiveTab(() => 3);
+      
+      if(ProId){
+    
+        dispatch(editProfile({profileData:formData,id:ProId,userId:singleUser.userId}))
+      }else{
+        dispatch(createProfile(formData))
+      }
+    
+      // setActiveTab(() => 3);
     }
+
   };
 
   return (
@@ -54,7 +68,7 @@ const UserWork = ({
       className="pb-6 max-h-full px-3 customScrollbar"
       onSubmit={handleSubmit}
     >
-      {AuthorizedData?.map((elm, index) => (
+      {WorkDataStateForm?.map((elm, index) => (
         <div key={index} className="pl-2 pb-4 border-b-2 border-slate-100">
           <div className="py-1 ">
             <h1 className="text-lg font-semibold text-gray-800">
@@ -64,6 +78,7 @@ const UserWork = ({
           </div>
           <div className="px-4 mt-4 grid grid-cols-3 gap-x-7 gap-y-4">
             {elm.forminput.map((elem) => (
+              <div key={elem.id} className="w-full mb-2">
               <CustomInput
                 key={elem.id}
                 type={elem.type}
@@ -74,6 +89,7 @@ const UserWork = ({
                 isInvalid={invalidFields[elem.id]}
                 onchange={(e) => handleChange(elem.id, e.target.value)}
               />
+              </div>
             ))}
           </div>
         </div>

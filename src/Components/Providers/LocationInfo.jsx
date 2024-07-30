@@ -106,11 +106,11 @@ const LocationInfo = ({
       onSubmit={handleSubmit}
     >
       <div className="pl-2 pb-4 border-b-2 border-slate-100">
-        <div className="px-4 mt-4 flex flex-wrap ">
+        <div className="px-4 mt-4 grid grid-cols-3 gap-x-7 gap-y-4">
           {UserBasicInfo.map((elem, index) => (
-            <div key={elem.id} className="w-full sm:w-1/3 mb-3 px-2 ">
-            {
-              elem.id === "phoneNumber" ? 
+            
+            <div key={elem.id} className="w-full  mb-2 ">
+             { elem.id === "phoneNumber" ? 
               <PhoneNumberInput
                   type={elem.type}
                   label={elem.label}
@@ -131,10 +131,10 @@ const LocationInfo = ({
                 value={locationFormData[elem.id] || ""}
                 isInvalid={invalidFields[elem.id]}
                 onchange={(e) => handleChange(elem.id, e.target.value)}
-              />
-            }
-             
-            </div>
+              />}
+            
+             </div>
+            
           ))}
         </div>
       </div>

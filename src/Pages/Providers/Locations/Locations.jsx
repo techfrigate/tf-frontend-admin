@@ -4,10 +4,10 @@ import LocationsTd from "./LocationsTd";
 import LocationstrHeader from "./LocationstrHeader";
 import ReactPaginate from "react-paginate";
 import CustomTable from "../../../Components/Common/CustomTable";
-import { data, LocationFrom } from "./LocationsData";
+import { LocationFrom } from "./LocationsData";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLocations, getLocation } from "../../../redux/locations/locationSlice";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const Locations = ({ showForm, toggleCreateProviderForm }) => {
   const [currentPage, setCurrentPage] = useState(1);
